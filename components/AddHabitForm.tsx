@@ -10,6 +10,7 @@ interface AddHabitFormProps {
     dailyGoal: number;
     minVersion: number;
     category: HabitCategory;
+    points: number;
   }) => void;
 }
 
@@ -20,6 +21,7 @@ export function AddHabitForm({ onAdd }: AddHabitFormProps) {
   const [dailyGoal, setDailyGoal] = useState("20");
   const [minVersion, setMinVersion] = useState("2");
   const [category, setCategory] = useState<HabitCategory>("mind");
+  const [points, setPoints] = useState("1");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,6 +38,7 @@ export function AddHabitForm({ onAdd }: AddHabitFormProps) {
       dailyGoal: goal,
       minVersion: minimum,
       category,
+      points: parseInt(points, 10),
     });
 
     setName("");
@@ -43,6 +46,7 @@ export function AddHabitForm({ onAdd }: AddHabitFormProps) {
     setDailyGoal("20");
     setMinVersion("2");
     setCategory("mind");
+    setPoints("1");
     setIsOpen(false);
   };
 
@@ -155,7 +159,25 @@ export function AddHabitForm({ onAdd }: AddHabitFormProps) {
     <option value="money">Деньги</option>
   </select>
 </div>
+<div>
+  <label
+    htmlFor="points"
+    className="mb-1 block text-xs text-zinc-500"
+  >
+    Очки за выполнение
+  </label>
 
+  <select
+    id="points"
+    value={points}
+    onChange={(e) => setPoints(e.target.value)}
+    className="w-full rounded-xl border border-zinc-700 bg-zinc-800 px-3 py-2 text-zinc-100 outline-none focus:border-emerald-500"
+  >
+    <option value="1">1 очко — маленькая привычка</option>
+    <option value="2">2 очка — средняя привычка</option>
+    <option value="3">3 очка — большая привычка</option>
+  </select>
+</div>
       <div className="flex gap-2">
         <button
           type="submit"

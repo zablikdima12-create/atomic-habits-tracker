@@ -53,16 +53,15 @@ export default function HomePage() {
 
   <div className="grid grid-cols-2 gap-3">
     {[
-      { key: "mind", emoji: "🧠", name: "Разум" },
-      { key: "fitness", emoji: "💪", name: "Физическая форма" },
-      { key: "money", emoji: "💰", name: "Деньги" },
+      { key: "mind", name: "Разум" },
+      { key: "fitness", name: "Физическая форма" },
+      { key: "money", name: "Деньги" },
     ].map((category) => (
       <div
         key={category.key}
         className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4"
       >
         <div className="mb-2 flex items-center gap-2">
-          <span className="text-xl">{category.emoji}</span>
           <span className="text-sm font-medium text-zinc-200">
             {category.name}
           </span>

@@ -49,8 +49,11 @@ export function useHabits() {
   );
 
   const toggleCompletion = useCallback(
-    (habitId: string, value: number) => {
+    (habitId: string) => {
       const today = getTodayString();
+  
+      const habit = data.habits.find((h) => h.id === habitId);
+      if (!habit) return;
   
       const alreadyDone = isCompletedOnDate(
         data.completions,
@@ -62,7 +65,14 @@ export function useHabits() {
         ? data.completions.filter(
             (c) => !(c.habitId === habitId && c.date === today)
           )
-        : [...data.completions, { habitId, date: today, value }];
+        : [
+            ...data.completions,
+            {
+              habitId,
+              date: today,
+              value: habit.points,
+            },
+          ];
   
       persist({ ...data, completions });
     },
@@ -97,6 +107,22 @@ const categoryProgress = categories.reduce(
   },
   {} as Record<(typeof categories)[number], number>
 );
+const categoryPoints = categories.reduce(
+  (result, category) => {
+    const categoryHabitIds = new Set(
+      data.habits
+        .filter((habit) => habit.category === category)
+        .map((habit) => habit.id)
+    );
+
+    result[category] = data.completions
+      .filter((completion) => categoryHabitIds.has(completion.habitId))
+      .reduce((total, completion) => total + completion.value, 0);
+
+    return result;
+  },
+  {} as Record<(typeof categories)[number], number>
+);
 
   const isHabitDoneToday = useCallback(
     (habitId: string) => isCompletedOnDate(data.completions, habitId, today),
@@ -110,6 +136,7 @@ const categoryProgress = categories.reduce(
     todayProgress,
     streak,
     categoryProgress,
+    categoryPoints,
     addHabit,
     deleteHabit,
     toggleCompletion,
