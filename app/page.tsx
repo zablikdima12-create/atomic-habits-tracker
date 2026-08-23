@@ -56,7 +56,6 @@ export default function HomePage() {
       { key: "mind", emoji: "🧠", name: "Разум" },
       { key: "fitness", emoji: "💪", name: "Физическая форма" },
       { key: "money", emoji: "💰", name: "Деньги" },
-      { key: "psychology", emoji: "🧘", name: "Психология" },
     ].map((category) => (
       <div
         key={category.key}

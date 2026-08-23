@@ -72,7 +72,7 @@ export function useHabits() {
   const today = getTodayString();
   const todayProgress = getTodayProgress(data.habits, data.completions, today);
   const streak = calculateStreak(data.habits, data.completions);
-  const categories = ["mind", "fitness", "money", "psychology"] as const;
+  const categories = ["mind", "fitness", "money"] as const;
 
 const categoryProgress = categories.reduce(
   (result, category) => {

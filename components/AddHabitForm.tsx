@@ -153,7 +153,6 @@ export function AddHabitForm({ onAdd }: AddHabitFormProps) {
     <option value="mind">Разум</option>
     <option value="fitness">Физическая форма</option>
     <option value="money">Деньги</option>
-    <option value="psychology">Психология</option>
   </select>
 </div>
 

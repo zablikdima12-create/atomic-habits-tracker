@@ -1,8 +1,7 @@
 export type HabitCategory =
   | "mind"
   | "fitness"
-  | "money"
-  | "psychology";
+  | "money";
 
 export interface Habit {
   id: string;
