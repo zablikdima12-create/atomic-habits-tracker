@@ -14,6 +14,7 @@ export default function HomePage() {
     isLoaded,
     todayProgress,
     streak,
+    categoryProgress,
     toggleCompletion,
     isHabitDoneToday,
   } = useHabitsContext();
@@ -45,6 +46,52 @@ export default function HomePage() {
         <ProgressBar percentage={todayProgress} />
         <StreakBadge streak={streak} />
       </div>
+      <section className="mb-6">
+  <h2 className="mb-3 text-sm font-medium text-zinc-400">
+    Развитие
+  </h2>
+
+  <div className="grid grid-cols-2 gap-3">
+    {[
+      { key: "mind", emoji: "🧠", name: "Разум" },
+      { key: "fitness", emoji: "💪", name: "Физическая форма" },
+      { key: "money", emoji: "💰", name: "Деньги" },
+      { key: "psychology", emoji: "🧘", name: "Психология" },
+    ].map((category) => (
+      <div
+        key={category.key}
+        className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4"
+      >
+        <div className="mb-2 flex items-center gap-2">
+          <span className="text-xl">{category.emoji}</span>
+          <span className="text-sm font-medium text-zinc-200">
+            {category.name}
+          </span>
+        </div>
+
+        <div className="mb-2 h-2 overflow-hidden rounded-full bg-zinc-800">
+          <div
+            className="h-full rounded-full bg-emerald-500 transition-all"
+            style={{
+              width: `${categoryProgress[
+                category.key as keyof typeof categoryProgress
+              ]}%`,
+            }}
+          />
+        </div>
+
+        <p className="text-xs text-zinc-500">
+          {
+            categoryProgress[
+              category.key as keyof typeof categoryProgress
+            ]
+          }
+          %
+        </p>
+      </div>
+    ))}
+  </div>
+</section>
 
       <section>
         <h2 className="mb-3 text-sm font-medium text-zinc-400">

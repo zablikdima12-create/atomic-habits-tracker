@@ -72,6 +72,31 @@ export function useHabits() {
   const today = getTodayString();
   const todayProgress = getTodayProgress(data.habits, data.completions, today);
   const streak = calculateStreak(data.habits, data.completions);
+  const categories = ["mind", "fitness", "money", "psychology"] as const;
+
+const categoryProgress = categories.reduce(
+  (result, category) => {
+    const categoryHabits = data.habits.filter(
+      (habit) => habit.category === category
+    );
+
+    if (categoryHabits.length === 0) {
+      result[category] = 0;
+      return result;
+    }
+
+    const completed = categoryHabits.filter((habit) =>
+      isCompletedOnDate(data.completions, habit.id, today)
+    ).length;
+
+    result[category] = Math.round(
+      (completed / categoryHabits.length) * 100
+    );
+
+    return result;
+  },
+  {} as Record<(typeof categories)[number], number>
+);
 
   const isHabitDoneToday = useCallback(
     (habitId: string) => isCompletedOnDate(data.completions, habitId, today),
@@ -84,6 +109,7 @@ export function useHabits() {
     isLoaded,
     todayProgress,
     streak,
+    categoryProgress,
     addHabit,
     deleteHabit,
     toggleCompletion,
