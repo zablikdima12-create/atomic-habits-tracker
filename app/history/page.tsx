@@ -73,7 +73,7 @@ export default function HistoryPage() {
             >
               <div className="mb-5 flex items-center gap-3">
                 <span className="text-2xl">
-                  {habit.icon}
+                  {habit.emoji}
                 </span>
 
                 <div>
@@ -82,8 +82,8 @@ export default function HistoryPage() {
                   </h2>
 
                   <p className="text-xs text-zinc-500">
-                    Цель: {habit.target}
-                  </p>
+  Цель: {habit.dailyGoal} мин · Минимум: {habit.minVersion} мин
+</p>
                 </div>
               </div>
 
