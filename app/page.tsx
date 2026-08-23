@@ -113,7 +113,7 @@ export default function HomePage() {
                 key={habit.id}
                 habit={habit}
                 isCompleted={isHabitDoneToday(habit.id)}
-                onToggle={(value) => toggleCompletion(habit.id, value)}
+                onToggle={() => toggleCompletion(habit.id)}
               />
             ))}
           </div>
