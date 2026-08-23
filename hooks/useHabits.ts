@@ -123,6 +123,13 @@ const categoryPoints = categories.reduce(
   },
   {} as Record<(typeof categories)[number], number>
 );
+const categoryGrowth = categories.reduce(
+  (result, category) => {
+    result[category] = categoryPoints[category] / 10;
+    return result;
+  },
+  {} as Record<(typeof categories)[number], number>
+);
 
   const isHabitDoneToday = useCallback(
     (habitId: string) => isCompletedOnDate(data.completions, habitId, today),
@@ -137,6 +144,7 @@ const categoryPoints = categories.reduce(
     streak,
     categoryProgress,
     categoryPoints,
+    categoryGrowth,
     addHabit,
     deleteHabit,
     toggleCompletion,

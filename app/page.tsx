@@ -16,6 +16,7 @@ export default function HomePage() {
     streak,
     categoryProgress,
     categoryPoints,
+    categoryGrowth,
     toggleCompletion,
     isHabitDoneToday,
   } = useHabitsContext();
@@ -85,17 +86,22 @@ export default function HomePage() {
       categoryProgress[
         category.key as keyof typeof categoryProgress
       ]
-    }
-    % сегодня
+    }% сегодня
   </p>
 
   <p className="text-xs font-medium text-zinc-300">
-    {categoryPoints[
-      category.key as keyof typeof categoryPoints
-    ]}{" "}
-    очков
+    +{categoryGrowth[
+      category.key as keyof typeof categoryGrowth
+    ].toFixed(1)}%
   </p>
 </div>
+
+<p className="mt-1 text-xs text-zinc-600">
+  {categoryPoints[
+    category.key as keyof typeof categoryPoints
+  ]}{" "}
+  очков
+</p>
       </div>
     ))}
   </div>

@@ -5,8 +5,8 @@ import { usePathname } from "next/navigation";
 
 const links = [
   { href: "/", label: "Сегодня", icon: "☀️" },
-  { href: "/history", label: "История", icon: "📊" },
   { href: "/habits", label: "Привычки", icon: "📋" },
+  { href: "/growth", label: "Рост", icon: "📈" },
 ];
 
 export function Navigation() {
@@ -17,6 +17,7 @@ export function Navigation() {
       <div className="mx-auto flex max-w-lg">
         {links.map((link) => {
           const isActive = pathname === link.href;
+
           return (
             <Link
               key={link.href}
