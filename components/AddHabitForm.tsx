@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { HabitCategory } from "@/types/habit";
 
 interface AddHabitFormProps {
   onAdd: (habit: {
@@ -8,6 +9,7 @@ interface AddHabitFormProps {
     emoji: string;
     dailyGoal: number;
     minVersion: number;
+    category: HabitCategory;
   }) => void;
 }
 
@@ -17,6 +19,7 @@ export function AddHabitForm({ onAdd }: AddHabitFormProps) {
   const [emoji, setEmoji] = useState("✨");
   const [dailyGoal, setDailyGoal] = useState("20");
   const [minVersion, setMinVersion] = useState("2");
+  const [category, setCategory] = useState<HabitCategory>("mind");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,12 +35,14 @@ export function AddHabitForm({ onAdd }: AddHabitFormProps) {
       emoji: emoji.trim() || "✨",
       dailyGoal: goal,
       minVersion: minimum,
+      category,
     });
 
     setName("");
     setEmoji("✨");
     setDailyGoal("20");
     setMinVersion("2");
+    setCategory("mind");
     setIsOpen(false);
   };
 
@@ -131,6 +136,26 @@ export function AddHabitForm({ onAdd }: AddHabitFormProps) {
         Минимальная версия — правило «2 минуты» из «Атомных привычек»: начни с
         малого, чтобы не пропускать дни.
       </p>
+      <div>
+  <label
+    htmlFor="category"
+    className="mb-1 block text-xs text-zinc-500"
+  >
+    Направление развития
+  </label>
+
+  <select
+    id="category"
+    value={category}
+    onChange={(e) => setCategory(e.target.value as HabitCategory)}
+    className="w-full rounded-xl border border-zinc-700 bg-zinc-800 px-3 py-2 text-zinc-100 outline-none focus:border-emerald-500"
+  >
+    <option value="mind">Разум</option>
+    <option value="fitness">Физическая форма</option>
+    <option value="money">Деньги</option>
+    <option value="psychology">Психология</option>
+  </select>
+</div>
 
       <div className="flex gap-2">
         <button
