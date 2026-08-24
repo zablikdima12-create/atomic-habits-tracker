@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { useHabitsContext } from "@/context/HabitsContext";
 import { addDays, getTodayString } from "@/lib/dates";
@@ -10,6 +11,85 @@ const categories = [
   { key: "money", name: "Деньги" },
 ] as const;
 
+function CompoundGrowth() {
+  const [rate, setRate] = useState(1);
+
+  const milestones = [1, 30, 90, 180, 365];
+
+  const values = milestones.map((day) =>
+    Math.pow(1 + rate / 100, day)
+  );
+
+  const maxValue = values[values.length - 1];
+
+  return (
+    <section className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4">
+      <div className="mb-4">
+        <h2 className="font-medium text-zinc-100">
+          Эффект ежедневного улучшения
+        </h2>
+
+        <p className="mt-1 text-xs text-zinc-500">
+          Математическая модель сложного процента
+        </p>
+      </div>
+
+      <div className="mb-5 grid grid-cols-3 gap-2">
+        {[0.1, 0.5, 1].map((value) => (
+          <button
+            key={value}
+            type="button"
+            onClick={() => setRate(value)}
+            className={`rounded-xl border px-3 py-2 text-sm transition-colors ${
+              rate === value
+                ? "border-emerald-500 bg-emerald-500/10 text-emerald-400"
+                : "border-zinc-700 bg-zinc-800 text-zinc-400 hover:text-zinc-200"
+            }`}
+          >
+            +{value}%
+          </button>
+        ))}
+      </div>
+
+      <div className="flex h-48 items-end gap-3 rounded-xl bg-zinc-950 p-4">
+        {milestones.map((day, index) => {
+          const value = values[index];
+
+          const height = Math.max(
+            (value / maxValue) * 100,
+            4
+          );
+
+          return (
+            <div
+              key={day}
+              className="flex h-full flex-1 flex-col items-center justify-end gap-2"
+            >
+              <span className="text-[9px] text-zinc-500">
+                {value.toFixed(1)}×
+              </span>
+
+              <div
+                className="w-full rounded-t bg-emerald-500 transition-all"
+                style={{
+                  height: `${height}%`,
+                }}
+              />
+
+              <span className="text-[10px] text-zinc-600">
+                {day}д
+              </span>
+            </div>
+          );
+        })}
+      </div>
+
+      <p className="mt-3 text-center text-xs text-zinc-600">
+        Начальная точка = 1×
+      </p>
+    </section>
+  );
+}
 export default function GrowthPage() {
   const { habits, completions, isLoaded } = useHabitsContext();
 
@@ -38,6 +118,7 @@ export default function GrowthPage() {
       </header>
 
       <div className="space-y-4">
+      <CompoundGrowth /> 
         {categories.map((category) => {
           const categoryHabitIds = new Set(
             habits

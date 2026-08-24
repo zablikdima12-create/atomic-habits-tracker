@@ -1,12 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import type { Habit } from "@/types/habit";
 
 interface HabitCardProps {
   habit: Habit;
   isCompleted: boolean;
-  onToggle: (value: number) => void;
+  onToggle: () => void;
 }
 
 export function HabitCard({
@@ -14,13 +13,6 @@ export function HabitCard({
   isCompleted,
   onToggle,
 }: HabitCardProps) {
-  const [showOptions, setShowOptions] = useState(false);
-
-  const handleComplete = (value: number) => {
-    onToggle(value);
-    setShowOptions(false);
-  };
-
   return (
     <div
       className={`rounded-2xl border p-4 transition-colors ${
@@ -44,19 +36,18 @@ export function HabitCard({
           </h3>
 
           <p className="mt-1 text-xs text-zinc-500">
-            Цель: {habit.dailyGoal} мин · Минимум: {habit.minVersion} мин
+            Цель: {habit.dailyGoal} мин · Минимум:{" "}
+            {habit.minVersion} мин
+          </p>
+
+          <p className="mt-1 text-xs text-emerald-500/70">
+            +{habit.points} очков
           </p>
         </div>
 
         <button
           type="button"
-          onClick={() => {
-            if (isCompleted) {
-              onToggle(0);
-            } else {
-              setShowOptions((value) => !value);
-            }
-          }}
+          onClick={onToggle}
           aria-label={
             isCompleted
               ? "Отменить выполнение"
@@ -71,52 +62,6 @@ export function HabitCard({
           {isCompleted ? "✓" : "+"}
         </button>
       </div>
-
-      {showOptions && !isCompleted && (
-        <div className="mt-4 rounded-xl border border-zinc-800 bg-zinc-950/70 p-3">
-          <p className="mb-3 text-sm font-medium text-zinc-300">
-            Как выполнил?
-          </p>
-
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              onClick={() => handleComplete(habit.minVersion)}
-              className="rounded-xl border border-zinc-700 bg-zinc-800 p-3 text-left transition-colors hover:border-emerald-500/50"
-            >
-              <span className="block text-sm font-medium text-zinc-100">
-                {habit.minVersion} мин
-              </span>
-
-              <span className="mt-1 block text-xs text-zinc-500">
-                Минимум
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleComplete(habit.dailyGoal)}
-              className="rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-3 text-left transition-colors hover:bg-emerald-500/20"
-            >
-              <span className="block text-sm font-medium text-emerald-300">
-                {habit.dailyGoal} мин
-              </span>
-
-              <span className="mt-1 block text-xs text-emerald-400/70">
-                Цель
-              </span>
-            </button>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => setShowOptions(false)}
-            className="mt-3 w-full text-xs text-zinc-500 hover:text-zinc-300"
-          >
-            Отмена
-          </button>
-        </div>
-      )}
     </div>
   );
 }
