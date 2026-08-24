@@ -102,6 +102,27 @@ export default function HomePage() {
   ]}{" "}
   очков
 </p>
+
+<div className="mt-3">
+  <div className="mb-1 flex justify-between text-[10px] text-zinc-600">
+    <span>0%</span>
+    <span>100%</span>
+  </div>
+
+  <div className="h-1.5 overflow-hidden rounded-full bg-zinc-800">
+    <div
+      className="h-full rounded-full bg-emerald-500 transition-all"
+      style={{
+        width: `${Math.min(
+          categoryGrowth[
+            category.key as keyof typeof categoryGrowth
+          ],
+          100
+        )}%`,
+      }}
+    />
+  </div>
+</div>
       </div>
     ))}
   </div>
