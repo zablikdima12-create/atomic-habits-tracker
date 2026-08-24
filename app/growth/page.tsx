@@ -1,9 +1,13 @@
 "use client";
 
 import { useState } from "react";
+
 import { AppShell } from "@/components/AppShell";
 import { useHabitsContext } from "@/context/HabitsContext";
-import { addDays, getTodayString } from "@/lib/dates";
+import {
+  getCategoryGrowth,
+  getCategoryGrowthHistory,
+} from "@/lib/storage";
 
 const categories = [
   { key: "mind", name: "Разум" },
@@ -90,6 +94,7 @@ function CompoundGrowth() {
     </section>
   );
 }
+
 export default function GrowthPage() {
   const { habits, completions, isLoaded } = useHabitsContext();
 
@@ -102,8 +107,6 @@ export default function GrowthPage() {
       </AppShell>
     );
   }
-
-  const today = getTodayString();
 
   return (
     <AppShell>
@@ -118,61 +121,50 @@ export default function GrowthPage() {
       </header>
 
       <div className="space-y-4">
-      <CompoundGrowth /> 
+        <CompoundGrowth />
+
         {categories.map((category) => {
           const categoryHabitIds = new Set(
             habits
-              .filter((habit) => habit.category === category.key)
+              .filter(
+                (habit) =>
+                  habit.category === category.key
+              )
               .map((habit) => habit.id)
           );
 
           const totalPoints = completions
             .filter((completion) =>
-              categoryHabitIds.has(completion.habitId)
+              categoryHabitIds.has(
+                completion.habitId
+              )
             )
             .reduce(
-              (total, completion) => total + completion.value,
+              (total, completion) =>
+                total + completion.value,
               0
             );
 
-          const growth = totalPoints / 10;
-
-          const days = Array.from({ length: 7 }, (_, index) =>
-            addDays(today, index - 6)
+          const growth = getCategoryGrowth(
+            habits,
+            completions,
+            category.key
           );
-          
-          const history = days.map((date) => {
-            const pointsUntilDay = completions
-              .filter(
-                (completion) =>
-                  completion.date <= date &&
-                  categoryHabitIds.has(completion.habitId)
-              )
-              .reduce(
-                (total, completion) => total + completion.value,
-                0
-              );
-          
-            const pointsForDay = completions
-              .filter(
-                (completion) =>
-                  completion.date === date &&
-                  categoryHabitIds.has(completion.habitId)
-              )
-              .reduce(
-                (total, completion) => total + completion.value,
-                0
-              );
-          
-            return {
-              date,
-              points: pointsForDay,
-              growth: pointsUntilDay / 10,
-            };
-          });
-          
+
+          const history =
+            getCategoryGrowthHistory(
+              habits,
+              completions,
+              category.key
+            );
+
+          const visibleHistory =
+            history.slice(-7);
+
           const maxGrowth = Math.max(
-            ...history.map((day) => day.growth),
+            ...visibleHistory.map(
+              (day) => day.growth
+            ),
             1
           );
 
@@ -197,47 +189,64 @@ export default function GrowthPage() {
                 </p>
               </div>
 
-              <div className="flex h-40 items-end gap-2 rounded-xl bg-zinc-950 p-3">
-                {history.map((day) => {
-                  const height =
-                    day.growth === 0
-                      ? 3
-                      : Math.max(
-                          (day.growth / maxGrowth) * 100,
-                          8
-                        );
+              {visibleHistory.length === 0 ? (
+                <div className="flex h-40 items-center justify-center rounded-xl bg-zinc-950">
+                  <p className="text-xs text-zinc-600">
+                    Выполни привычку, чтобы появился
+                    рост
+                  </p>
+                </div>
+              ) : (
+                <div className="flex h-40 items-end gap-2 rounded-xl bg-zinc-950 p-3">
+                  {visibleHistory.map((day) => {
+                    const height =
+                      day.growth === 0
+                        ? 3
+                        : Math.max(
+                            (day.growth /
+                              maxGrowth) *
+                              100,
+                            8
+                          );
 
-                  const dayName = new Date(
-                    `${day.date}T12:00:00`
-                  ).toLocaleDateString("ru-RU", {
-                    weekday: "short",
-                  });
+                    const dayName =
+                      new Date(
+                        `${day.date}T12:00:00`
+                      ).toLocaleDateString(
+                        "ru-RU",
+                        {
+                          weekday: "short",
+                        }
+                      );
 
-                  return (
-                    <div
-                      key={day.date}
-                      className="flex h-full flex-1 flex-col items-center justify-end gap-1"
-                    >
-                      <span className="text-[9px] text-zinc-600">
-                        {day.growth > 0
-                          ? `${day.growth.toFixed(1)}%`
-                          : ""}
-                      </span>
-
+                    return (
                       <div
-                        className="w-full rounded-t bg-emerald-500 transition-all"
-                        style={{
-                          height: `${height}%`,
-                        }}
-                      />
+                        key={day.date}
+                        className="flex h-full flex-1 flex-col items-center justify-end gap-1"
+                      >
+                        <span className="text-[9px] text-zinc-600">
+                          {day.growth > 0
+                            ? `${day.growth.toFixed(
+                                1
+                              )}%`
+                            : ""}
+                        </span>
 
-                      <span className="text-[9px] capitalize text-zinc-600">
-                        {dayName}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
+                        <div
+                          className="w-full rounded-t bg-emerald-500 transition-all"
+                          style={{
+                            height: `${height}%`,
+                          }}
+                        />
+
+                        <span className="text-[9px] capitalize text-zinc-600">
+                          {dayName}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </section>
           );
         })}
