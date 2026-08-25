@@ -7,6 +7,7 @@ const STORAGE_KEY = "atomic-habits-tracker";
 const EMPTY_DATA: AppData = {
   habits: [],
   completions: [],
+  startedAt: new Date().toISOString(),
 };
 
 export function loadData(): AppData {
@@ -22,6 +23,7 @@ export function loadData(): AppData {
     return {
       habits: parsed.habits ?? [],
       completions: parsed.completions ?? [],
+      startedAt: parsed.startedAt ?? new Date().toISOString(),
     };
   } catch {
     return EMPTY_DATA;

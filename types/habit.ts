@@ -23,4 +23,5 @@ export interface Completion {
 export interface AppData {
   habits: Habit[];
   completions: Completion[];
+  startedAt: string;
 }

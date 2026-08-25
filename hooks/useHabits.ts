@@ -19,6 +19,7 @@ export function useHabits() {
   const [data, setData] = useState<AppData>({
     habits: [],
     completions: [],
+    startedAt: new Date().toISOString(),
   });
 
   const [isLoaded, setIsLoaded] = useState(false);
@@ -52,17 +53,20 @@ export function useHabits() {
   const deleteHabit = useCallback(
     (id: string) => {
       persist({
-        habits: data.habits.filter((habit) => habit.id !== id),
+        habits: data.habits.filter(
+          (habit) => habit.id !== id
+        ),
         completions: data.completions.filter(
           (completion) => completion.habitId !== id
         ),
+        startedAt: data.startedAt,
       });
     },
     [data, persist]
   );
 
   const toggleCompletion = useCallback(
-    (habitId: string) => {
+    (habitId: string, completedMinutes?: number) => {
       const today = getTodayString();
 
       const habit = data.habits.find(
@@ -77,22 +81,50 @@ export function useHabits() {
         today
       );
 
-      const completions = alreadyDone
-        ? data.completions.filter(
-            (completion) =>
-              !(
-                completion.habitId === habitId &&
-                completion.date === today
-              )
-          )
-        : [
-            ...data.completions,
-            {
-              habitId,
-              date: today,
-              value: habit.points,
-            },
-          ];
+      // Если привычка уже выполнена — отменяем выполнение
+      if (alreadyDone) {
+        const completions = data.completions.filter(
+          (completion) =>
+            !(
+              completion.habitId === habitId &&
+              completion.date === today
+            )
+        );
+
+        persist({
+          ...data,
+          completions,
+        });
+
+        return;
+      }
+
+      // Если значение не передано, ничего не делаем.
+      // Это позволяет HabitCard сначала показать выбор.
+      if (completedMinutes === undefined) {
+        return;
+      }
+
+      // Полная цель = все очки.
+      // Минимум = пропорциональная часть очков.
+      const progressRatio = Math.min(
+        completedMinutes / habit.dailyGoal,
+        1
+      );
+
+      const earnedPoints = Math.max(
+        1,
+        Math.round(habit.points * progressRatio)
+      );
+
+      const completions = [
+        ...data.completions,
+        {
+          habitId,
+          date: today,
+          value: earnedPoints,
+        },
+      ];
 
       persist({
         ...data,
@@ -115,7 +147,11 @@ export function useHabits() {
     data.completions
   );
 
-  const categories = ["mind", "fitness", "money"] as const;
+  const categories = [
+    "mind",
+    "fitness",
+    "money",
+  ] as const;
 
   const categoryProgress = categories.reduce(
     (result, category) => {
@@ -142,14 +178,19 @@ export function useHabits() {
 
       return result;
     },
-    {} as Record<(typeof categories)[number], number>
+    {} as Record<
+      (typeof categories)[number],
+      number
+    >
   );
 
   const categoryPoints = categories.reduce(
     (result, category) => {
       const categoryHabitIds = new Set(
         data.habits
-          .filter((habit) => habit.category === category)
+          .filter(
+            (habit) => habit.category === category
+          )
           .map((habit) => habit.id)
       );
 
@@ -165,7 +206,10 @@ export function useHabits() {
 
       return result;
     },
-    {} as Record<(typeof categories)[number], number>
+    {} as Record<
+      (typeof categories)[number],
+      number
+    >
   );
 
   const categoryGrowth = categories.reduce(
@@ -175,7 +219,10 @@ export function useHabits() {
 
       return result;
     },
-    {} as Record<(typeof categories)[number], number>
+    {} as Record<
+      (typeof categories)[number],
+      number
+    >
   );
 
   const isHabitDoneToday = useCallback(
@@ -191,6 +238,7 @@ export function useHabits() {
   return {
     habits: data.habits,
     completions: data.completions,
+    startedAt: data.startedAt,
     isLoaded,
     todayProgress,
     streak,
