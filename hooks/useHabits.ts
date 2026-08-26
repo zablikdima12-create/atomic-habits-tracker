@@ -19,6 +19,7 @@ export function useHabits() {
   const [data, setData] = useState<AppData>({
     habits: [],
     completions: [],
+    goals: [],
     startedAt: new Date().toISOString(),
   });
 
@@ -59,6 +60,7 @@ export function useHabits() {
         completions: data.completions.filter(
           (completion) => completion.habitId !== id
         ),
+        goals: data.goals,
         startedAt: data.startedAt,
       });
     },
