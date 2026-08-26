@@ -8,6 +8,8 @@ const EMPTY_DATA: AppData = {
   habits: [],
   completions: [],
   goals: [],
+  tasks: [],
+  notes: [],
   startedAt: new Date().toISOString(),
 };
 
@@ -26,11 +28,15 @@ export function loadData(): AppData {
     const parsed = JSON.parse(raw) as Partial<AppData>;
 
     return {
-      habits: parsed.habits ?? [],
+      habits: (parsed.habits ?? []).map((habit) => ({
+        ...habit,
+        unit: habit.unit || "минут",
+      })),
       completions: parsed.completions ?? [],
       goals: parsed.goals ?? [],
-      startedAt:
-        parsed.startedAt ?? new Date().toISOString(),
+      tasks: parsed.tasks ?? [],
+      notes: parsed.notes ?? [],
+      startedAt: parsed.startedAt ?? new Date().toISOString(),
     };
   } catch {
     return EMPTY_DATA;

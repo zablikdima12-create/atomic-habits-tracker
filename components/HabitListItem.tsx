@@ -12,7 +12,7 @@ export function HabitListItem({ habit, onDelete }: HabitListItemProps) {
       <div className="min-w-0 flex-1">
         <p className="font-medium text-zinc-100">{habit.name}</p>
         <p className="text-xs text-zinc-500">
-          Цель: {habit.dailyGoal} мин · Минимум: {habit.minVersion} мин
+          Цель: {habit.dailyGoal} {habit.unit || "минут"}
         </p>
       </div>
       <button

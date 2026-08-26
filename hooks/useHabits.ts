@@ -20,6 +20,8 @@ export function useHabits() {
     habits: [],
     completions: [],
     goals: [],
+    tasks: [],
+    notes: [],
     startedAt: new Date().toISOString(),
   });
 
@@ -61,6 +63,8 @@ export function useHabits() {
           (completion) => completion.habitId !== id
         ),
         goals: data.goals,
+        tasks: data.tasks,
+        notes: data.notes,
         startedAt: data.startedAt,
       });
     },

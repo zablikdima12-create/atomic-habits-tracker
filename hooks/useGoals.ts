@@ -10,6 +10,8 @@ export function useGoals() {
     habits: [],
     completions: [],
     goals: [],
+    tasks: [],
+    notes: [],
     startedAt: new Date().toISOString(),
   });
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+
 import type { HabitCategory } from "@/types/habit";
 
 interface AddHabitFormProps {
@@ -8,43 +9,66 @@ interface AddHabitFormProps {
     name: string;
     emoji: string;
     dailyGoal: number;
-    minVersion: number;
+    unit: string;
     category: HabitCategory;
     points: number;
   }) => void;
 }
+
+const units = [
+  "минут",
+  "часов",
+  "страниц",
+  "повторений",
+  "раз",
+  "литров",
+  "километров",
+  "шагов",
+  "слов",
+  "задач",
+];
 
 export function AddHabitForm({ onAdd }: AddHabitFormProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState("");
   const [emoji, setEmoji] = useState("✨");
   const [dailyGoal, setDailyGoal] = useState("20");
-  const [minVersion, setMinVersion] = useState("2");
+  const [unit, setUnit] = useState("минут");
   const [category, setCategory] = useState<HabitCategory>("mind");
   const [points, setPoints] = useState("1");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     const trimmedName = name.trim();
+
     if (!trimmedName) return;
 
     const goal = parseInt(dailyGoal, 10);
-    const minimum = parseInt(minVersion, 10);
-    if (isNaN(goal) || goal <= 0 || isNaN(minimum) || minimum <= 0) return;
+    const parsedPoints = parseInt(points, 10);
+
+    if (
+      isNaN(goal) ||
+      goal <= 0 ||
+      isNaN(parsedPoints) ||
+      parsedPoints <= 0
+    ) {
+      return;
+    }
 
     onAdd({
       name: trimmedName,
       emoji: emoji.trim() || "✨",
       dailyGoal: goal,
-      minVersion: minimum,
+      unit,
       category,
-      points: parseInt(points, 10),
+      points: parsedPoints,
     });
 
     setName("");
     setEmoji("✨");
     setDailyGoal("20");
-    setMinVersion("2");
+    setUnit("минут");
     setCategory("mind");
     setPoints("1");
     setIsOpen(false);
@@ -67,13 +91,19 @@ export function AddHabitForm({ onAdd }: AddHabitFormProps) {
       onSubmit={handleSubmit}
       className="space-y-4 rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4"
     >
-      <h3 className="font-medium text-zinc-100">Новая привычка</h3>
+      <h3 className="font-medium text-zinc-100">
+        Новая привычка
+      </h3>
 
       <div className="grid grid-cols-[4rem_1fr] gap-3">
         <div>
-          <label htmlFor="emoji" className="mb-1 block text-xs text-zinc-500">
+          <label
+            htmlFor="emoji"
+            className="mb-1 block text-xs text-zinc-500"
+          >
             Эмодзи
           </label>
+
           <input
             id="emoji"
             type="text"
@@ -83,10 +113,15 @@ export function AddHabitForm({ onAdd }: AddHabitFormProps) {
             className="w-full rounded-xl border border-zinc-700 bg-zinc-800 px-2 py-2 text-center text-xl text-zinc-100 outline-none focus:border-emerald-500"
           />
         </div>
+
         <div>
-          <label htmlFor="name" className="mb-1 block text-xs text-zinc-500">
+          <label
+            htmlFor="name"
+            className="mb-1 block text-xs text-zinc-500"
+          >
             Название
           </label>
+
           <input
             id="name"
             type="text"
@@ -105,8 +140,9 @@ export function AddHabitForm({ onAdd }: AddHabitFormProps) {
             htmlFor="dailyGoal"
             className="mb-1 block text-xs text-zinc-500"
           >
-            Дневная цель (мин)
+            Дневная цель
           </label>
+
           <input
             id="dailyGoal"
             type="number"
@@ -117,67 +153,78 @@ export function AddHabitForm({ onAdd }: AddHabitFormProps) {
             className="w-full rounded-xl border border-zinc-700 bg-zinc-800 px-3 py-2 text-zinc-100 outline-none focus:border-emerald-500"
           />
         </div>
+
         <div>
           <label
-            htmlFor="minVersion"
+            htmlFor="unit"
             className="mb-1 block text-xs text-zinc-500"
           >
-            Минимум (мин)
+            Единица измерения
           </label>
-          <input
-            id="minVersion"
-            type="number"
-            min={1}
-            value={minVersion}
-            onChange={(e) => setMinVersion(e.target.value)}
-            required
+
+          <select
+            id="unit"
+            value={unit}
+            onChange={(e) => setUnit(e.target.value)}
             className="w-full rounded-xl border border-zinc-700 bg-zinc-800 px-3 py-2 text-zinc-100 outline-none focus:border-emerald-500"
-          />
+          >
+            {units.map((item) => (
+              <option key={item} value={item}>
+                {item}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
-      <p className="text-xs text-zinc-600">
-        Минимальная версия — правило «2 минуты» из «Атомных привычек»: начни с
-        малого, чтобы не пропускать дни.
-      </p>
       <div>
-  <label
-    htmlFor="category"
-    className="mb-1 block text-xs text-zinc-500"
-  >
-    Направление развития
-  </label>
+        <label
+          htmlFor="category"
+          className="mb-1 block text-xs text-zinc-500"
+        >
+          Направление развития
+        </label>
 
-  <select
-    id="category"
-    value={category}
-    onChange={(e) => setCategory(e.target.value as HabitCategory)}
-    className="w-full rounded-xl border border-zinc-700 bg-zinc-800 px-3 py-2 text-zinc-100 outline-none focus:border-emerald-500"
-  >
-    <option value="mind">Разум</option>
-    <option value="fitness">Физическая форма</option>
-    <option value="money">Деньги</option>
-  </select>
-</div>
-<div>
-  <label
-    htmlFor="points"
-    className="mb-1 block text-xs text-zinc-500"
-  >
-    Очки за выполнение
-  </label>
+        <select
+          id="category"
+          value={category}
+          onChange={(e) =>
+            setCategory(e.target.value as HabitCategory)
+          }
+          className="w-full rounded-xl border border-zinc-700 bg-zinc-800 px-3 py-2 text-zinc-100 outline-none focus:border-emerald-500"
+        >
+          <option value="mind">Разум</option>
+          <option value="fitness">Физическая форма</option>
+          <option value="money">Деньги</option>
+        </select>
+      </div>
 
-  <select
-    id="points"
-    value={points}
-    onChange={(e) => setPoints(e.target.value)}
-    className="w-full rounded-xl border border-zinc-700 bg-zinc-800 px-3 py-2 text-zinc-100 outline-none focus:border-emerald-500"
-  >
-    <option value="1">1 очко — маленькая привычка</option>
-    <option value="2">2 очка — средняя привычка</option>
-    <option value="3">3 очка — большая привычка</option>
-  </select>
-</div>
+      <div>
+        <label
+          htmlFor="points"
+          className="mb-1 block text-xs text-zinc-500"
+        >
+          Очки за выполнение
+        </label>
+
+        <select
+          id="points"
+          value={points}
+          onChange={(e) => setPoints(e.target.value)}
+          className="w-full rounded-xl border border-zinc-700 bg-zinc-800 px-3 py-2 text-zinc-100 outline-none focus:border-emerald-500"
+        >
+          <option value="1">
+            1 очко — маленькая привычка
+          </option>
+          <option value="2">
+            2 очка — средняя привычка
+          </option>
+          <option value="3">
+            3 очка — большая привычка
+          </option>
+        </select>
+      </div>
+
       <div className="flex gap-2">
         <button
           type="submit"
@@ -185,6 +232,7 @@ export function AddHabitForm({ onAdd }: AddHabitFormProps) {
         >
           Сохранить
         </button>
+
         <button
           type="button"
           onClick={() => setIsOpen(false)}

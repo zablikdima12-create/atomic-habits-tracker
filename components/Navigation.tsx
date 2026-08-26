@@ -7,6 +7,8 @@ const links = [
   { href: "/", label: "Сегодня", icon: "☀️" },
   { href: "/habits", label: "Привычки", icon: "📋" },
   { href: "/goals", label: "Цели", icon: "🎯" },
+  { href: "/tasks", label: "Задачи", icon: "✓" },
+  { href: "/notes", label: "Заметки", icon: "📝" },
   { href: "/growth", label: "Рост", icon: "📈" },
 ];
 
@@ -29,7 +31,10 @@ export function Navigation() {
                   : "text-zinc-500 hover:text-zinc-300"
               }`}
             >
-              <span className="text-lg">{link.icon}</span>
+              <span className="text-lg">
+                {link.icon}
+              </span>
+
               <span>{link.label}</span>
             </Link>
           );

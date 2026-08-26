@@ -82,7 +82,7 @@ export default function HistoryPage() {
                   </h2>
 
                   <p className="text-xs text-zinc-500">
-  Цель: {habit.dailyGoal} мин · Минимум: {habit.minVersion} мин
+                  Цель: {habit.dailyGoal} {habit.unit || "минут"}
 </p>
                 </div>
               </div>

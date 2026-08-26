@@ -8,7 +8,7 @@ export interface Habit {
   name: string;
   emoji: string;
   dailyGoal: number;
-  minVersion: number;
+  unit: string;
   points: number;
   category: HabitCategory;
   createdAt: string;
@@ -29,13 +29,33 @@ export interface Goal {
   current: number;
   unit: string;
   deadline: string;
-  createdAt: string;
   completed: boolean;
+  createdAt: string;
+}
+
+export interface Task {
+  id: string;
+  goalId: string;
+  title: string;
+  category: HabitCategory;
+  completed: boolean;
+  createdAt: string;
+  completedAt?: string;
+}
+
+export interface Note {
+  id: string;
+  title: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface AppData {
   habits: Habit[];
   completions: Completion[];
   goals: Goal[];
+  tasks: Task[];
+  notes: Note[];
   startedAt: string;
 }
