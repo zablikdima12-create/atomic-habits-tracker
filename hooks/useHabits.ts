@@ -72,7 +72,7 @@ export function useHabits() {
   );
 
   const toggleCompletion = useCallback(
-    (habitId: string, completedMinutes?: number) => {
+    (habitId: string) => {
       const today = getTodayString();
 
       const habit = data.habits.find(
@@ -105,30 +105,14 @@ export function useHabits() {
         return;
       }
 
-      // Если значение не передано, ничего не делаем.
-      // Это позволяет HabitCard сначала показать выбор.
-      if (completedMinutes === undefined) {
-        return;
-      }
-
-      // Полная цель = все очки.
-      // Минимум = пропорциональная часть очков.
-      const progressRatio = Math.min(
-        completedMinutes / habit.dailyGoal,
-        1
-      );
-
-      const earnedPoints = Math.max(
-        1,
-        Math.round(habit.points * progressRatio)
-      );
-
+      // Если привычка ещё не выполнена —
+      // сразу засчитываем полное выполнение
       const completions = [
         ...data.completions,
         {
           habitId,
           date: today,
-          value: earnedPoints,
+          value: habit.points,
         },
       ];
 
